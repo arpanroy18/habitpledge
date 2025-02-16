@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target } from 'lucide-react';
+import { Target, Edit, Trash } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/lib/database.types';
+import { useToast } from '@/hooks/use-toast';
+import { EditHabitDialog } from '@/components/edit-habit-dialog';
 
 type Habit = Database['public']['Tables']['habits']['Row'];
 
@@ -14,6 +16,8 @@ export default function HabitsPage() {
   const router = useRouter();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchHabits = async () => {
@@ -42,6 +46,16 @@ export default function HabitsPage() {
     fetchHabits();
   }, [router]);
 
+  const handleEdit = (habit: Habit) => {
+    setEditingHabit(habit);
+  };
+
+  const handleEditConfirmed = () => {
+    if (editingHabit) {
+      router.push(`/habits/edit/${editingHabit.id}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -63,29 +77,30 @@ export default function HabitsPage() {
             <Card key={habit.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xl font-medium">{habit.title}</CardTitle>
-                <Target className="h-5 w-5 text-muted-foreground" />
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(habit)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">{habit.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Target: {habit.target_days} days/{habit.period}</span>
-                    <span className="text-sm font-medium">${habit.pledge_amount} pledged</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm capitalize bg-primary/10 px-2 py-1 rounded">
-                      {habit.status}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {new Date(habit.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
+                <p className="text-sm text-muted-foreground mb-4">{habit.description}</p>
+                <div className="flex justify-between text-sm">
+                  <span>Pledge: ${habit.pledge_amount}</span>
+                  <span>{habit.frequency}</span>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
+
+      <EditHabitDialog 
+        isOpen={!!editingHabit}
+        onClose={() => setEditingHabit(null)}
+        onConfirm={handleEditConfirmed}
+        habitTitle={editingHabit?.title || ''}
+      />
     </div>
   );
 }

@@ -88,8 +88,8 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
           title: habit.title,
           description: habit.description,
           frequency: habit.frequency,
-          target_days: habit.target_days,
-          pledge_amount: habit.pledge_amount,
+          target_days: Number(habit.target_days),
+          pledge_amount: Number(habit.pledge_amount),
           updated_at: new Date().toISOString(),
         })
         .eq('id', habit.id);
@@ -184,8 +184,8 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                   <Input
                     id="target_days"
                     type="number"
-                    value={habit.target_days}
-                    onChange={(e) => setHabit({ ...habit, target_days: parseInt(e.target.value) })}
+                    value={habit.target_days?.toString() || ''}
+                    onChange={(e) => setHabit({ ...habit, target_days: parseInt(e.target.value) || 0 })}
                     required
                     min={1}
                   />
@@ -195,8 +195,8 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                   <Input
                     id="pledge_amount"
                     type="number"
-                    value={habit.pledge_amount}
-                    onChange={(e) => setHabit({ ...habit, pledge_amount: parseInt(e.target.value) })}
+                    value={habit.pledge_amount?.toString() || ''}
+                    onChange={(e) => setHabit({ ...habit, pledge_amount: parseInt(e.target.value) || 0 })}
                     required
                     min={1}
                   />

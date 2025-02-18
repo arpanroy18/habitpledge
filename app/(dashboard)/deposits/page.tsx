@@ -70,14 +70,19 @@ export default function DepositsPage() {
 
       const { data, error } = await supabase
         .from('account_balances')
-        .select('current_balance')
+        .select('available_balance')
         .eq('user_id', session.user.id)
         .single();
 
       if (error) throw error;
-      setBalance(data?.current_balance || 0);
-    } catch (error) {
-      console.error('Error fetching balance:', error);
+      setBalance(data?.available_balance || 0);
+    } catch (error: any) {
+      console.error('Error fetching balance:', error.message || error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch balance. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 

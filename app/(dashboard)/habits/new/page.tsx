@@ -30,11 +30,11 @@ export default function NewHabitPage() {
       if (!session) return;
       const { data, error } = await supabase
         .from('account_balances')
-        .select('current_balance')
+        .select('available_balance')
         .eq('user_id', session.user.id)
         .single();
       if (error) throw error;
-      setBalance(data?.current_balance || 0);
+      setBalance(data?.available_balance || 0);
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
@@ -63,7 +63,7 @@ export default function NewHabitPage() {
           frequency: formData.frequency,
           target_days: parseInt(formData.target_days),
           pledge_amount: parseFloat(formData.pledge_amount),
-          status: 'active',
+          // Remove status field as it no longer exists in the database
         },
       ]);
 

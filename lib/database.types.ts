@@ -51,6 +51,8 @@ export interface Database {
           status: string
           created_at: string
           updated_at: string
+          times_per_week?: number | null
+          times_per_month?: number | null
         }
         Insert: {
           id?: string
@@ -65,6 +67,8 @@ export interface Database {
           status?: string
           created_at?: string
           updated_at?: string
+          times_per_week?: number | null
+          times_per_month?: number | null
         }
         Update: {
           id?: string
@@ -79,6 +83,8 @@ export interface Database {
           status?: string
           created_at?: string
           updated_at?: string
+          times_per_week?: number | null
+          times_per_month?: number | null
         }
       }
       deposits: {

@@ -122,7 +122,10 @@ export default function HabitsPage() {
                 <p className="text-sm text-muted-foreground mb-4">{habit.description}</p>
                 <div className="flex justify-between text-sm">
                   <span>Pledge: ${habit.pledge_amount}</span>
-                  <span>{habit.frequency}</span>
+                  <div className="flex gap-4">
+                    <span>{habit.target_days} {habit.frequency === 'daily' ? 'Days' : 'Weeks'}</span>
+                    <span>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -24,6 +24,10 @@ export default function NewHabitPage() {
     pledge_amount: '',
   });
 
+  const targetLabel = formData.frequency === 'daily' ? 'Target Days' : 'Target Weeks';
+  const targetMin = formData.frequency === 'daily' ? 1 : 1;
+  const targetMax = formData.frequency === 'daily' ? 365 : 52;
+
   const fetchBalance = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -142,11 +146,12 @@ export default function NewHabitPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="target_days">Target Days</Label>
+                <Label htmlFor="target_days">{targetLabel}</Label>
                 <Input
                   id="target_days"
                   type="number"
-                  min="1"
+                  min={targetMin}
+                  max={targetMax}
                   value={formData.target_days}
                   onChange={(e) => setFormData({ ...formData, target_days: e.target.value })}
                   required

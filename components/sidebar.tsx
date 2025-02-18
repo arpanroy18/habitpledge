@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Home, Target, LogOut, Wallet } from "lucide-react";
@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase/client";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   const navItems = [
     {
@@ -27,6 +28,11 @@ export function Sidebar() {
       icon: Wallet
     }
   ];
+
+  const handleSignOut = () => {
+    router.push('/');  // Redirect immediately
+    supabase.auth.signOut();  // Sign out in the background
+  };
 
   return (
     <div className="pb-12 min-h-screen border-r">
@@ -68,7 +74,7 @@ export function Sidebar() {
             <Button
               variant="ghost"
               className="w-full justify-start text-muted-foreground"
-              onClick={() => supabase.auth.signOut()}
+              onClick={handleSignOut}
             >
               <LogOut className="mr-2 h-4 w-4" />
               Log out

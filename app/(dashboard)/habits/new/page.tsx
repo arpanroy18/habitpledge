@@ -63,7 +63,7 @@ export default function NewHabitPage() {
           frequency: formData.frequency,
           target_days: parseInt(formData.target_days),
           pledge_amount: parseFloat(formData.pledge_amount),
-          // Remove status field as it no longer exists in the database
+          status: 'active',
         },
       ]);
 

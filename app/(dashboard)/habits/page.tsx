@@ -58,10 +58,17 @@ export default function HabitsPage() {
 
   const handleDelete = async (habit: Habit) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('User not authenticated');
+      }
+
+      // Use separate eq() conditions to ensure type matching and composite filtering
       const { error } = await supabase
         .from('habits')
         .delete()
-        .eq('id', habit.id);
+        .eq('id', habit.id)
+        .eq('user_id', session.user.id);
 
       if (error) throw error;
 
@@ -70,7 +77,6 @@ export default function HabitsPage() {
         description: 'Habit deleted successfully',
       });
       
-      // Update the local state to remove the deleted habit
       setHabits(habits.filter(h => h.id !== habit.id));
     } catch (error) {
       console.error('Error deleting habit:', error);

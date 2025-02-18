@@ -56,6 +56,32 @@ export default function HabitsPage() {
     }
   };
 
+  const handleDelete = async (habit: Habit) => {
+    try {
+      const { error } = await supabase
+        .from('habits')
+        .delete()
+        .eq('id', habit.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Habit deleted successfully',
+      });
+      
+      // Update the local state to remove the deleted habit
+      setHabits(habits.filter(h => h.id !== habit.id));
+    } catch (error) {
+      console.error('Error deleting habit:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete habit',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -80,6 +106,9 @@ export default function HabitsPage() {
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(habit)}>
                     <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(habit)}>
+                    <Trash className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>

@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Deposit = {
   id: string;
@@ -35,6 +36,7 @@ export default function DepositsPage() {
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [balance, setBalance] = useState<number>(0);
+  const [visibleTransactions, setVisibleTransactions] = useState<number>(5);
 
   useEffect(() => {
     fetchTransactions();
@@ -92,6 +94,16 @@ export default function DepositsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (parseFloat(amount) <= 0 || !amount) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter an amount greater than $0',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -164,8 +176,8 @@ export default function DepositsPage() {
                     id="amount"
                     type="number"
                     min="0"
-                    step="0.01"
-                    value={amount}
+                    step="1"
+                    value={Number(amount).toFixed(2)}
                     onChange={(e) => setAmount(e.target.value)}
                     required
                   />
@@ -193,36 +205,57 @@ export default function DepositsPage() {
               <CardTitle>Balance History</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {transactions.length === 0 ? (
-                  <p className="text-center text-muted-foreground">No transactions yet</p>
-                ) : (
-                  transactions.map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className={cn(
-                        "flex justify-between items-start p-4 border rounded-lg",
-                        transaction.type === 'deposit' ? 'bg-green-50/50' : 'bg-red-50/50'
-                      )}
-                    >
-                      <div>
-                        <p className={cn(
-                          "font-medium",
-                          transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'
-                        )}>
-                          {transaction.type === 'deposit' ? '+' : ''}{transaction.amount.toFixed(2)}
-                        </p>
-                        {transaction.notes && (
-                          <p className="text-sm text-muted-foreground">{transaction.notes}</p>
+              <ScrollArea className="h-[400px] pr-4">
+                <div className="space-y-6">
+                  {transactions.length === 0 ? (
+                    <p className="text-center text-muted-foreground">No transactions yet</p>
+                  ) : (
+                    transactions.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className={cn(
+                          "flex justify-between items-center p-4 border rounded-lg shadow-sm hover:shadow-md transition-all",
+                          transaction.type === 'deposit' 
+                            ? 'bg-green-50/50 dark:bg-green-950/20 border-green-100 dark:border-green-900' 
+                            : 'bg-red-50/50 dark:bg-red-950/20 border-red-100 dark:border-red-900'
                         )}
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "font-medium text-lg",
+                              transaction.type === 'deposit' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                            )}>
+                              {transaction.type === 'deposit' ? '+$' : '-$'}{Math.abs(transaction.amount).toFixed(2)}
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded-full bg-secondary">
+                              {transaction.type === 'deposit' ? 'Deposit' : 'Pledge'}
+                            </span>
+                          </div>
+                          {transaction.notes && (
+                            <p className="text-sm text-muted-foreground">{transaction.notes}</p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            {new Date(transaction.created_at).toLocaleDateString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(transaction.created_at).toLocaleTimeString(undefined, {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(transaction.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </div>

@@ -87,12 +87,12 @@ export default function DashboardPage() {
           setHabits(habitsData);
           
           // Calculate stats
-          const activeHabits = habitsData.filter(h => h.status === 'active').length;
+          const currentHabits = habitsData.length;
           const completedHabits = habitsData.filter(h => h.status === 'completed').length;
           const totalPledged = habitsData.reduce((sum, habit) => sum + Number(habit.pledge_amount), 0);
           
           setStats({
-            activeHabits,
+            activeHabits: currentHabits,
             completedHabits,
             totalPledged,
             streakDays: calculateLongestStreak(habitsData),
@@ -158,13 +158,13 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Habits</CardTitle>
+              <CardTitle className="text-sm font-medium">Current Habits</CardTitle>
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.activeHabits}</div>
               <p className="text-xs text-muted-foreground">
-                Habits in progress
+                Total habits set
               </p>
             </CardContent>
           </Card>

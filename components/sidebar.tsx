@@ -32,7 +32,19 @@ export function Sidebar() {
     <div className="pb-12 min-h-screen border-r">
       <div className="space-y-4 py-4">
         <div className="px-4 py-2">
-          <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
+          <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight flex items-center gap-2">
+            <svg
+              viewBox="0 0 24 24"
+              className="h-6 w-6 text-primary"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 6L9 17l-5-5" />
+              <circle cx="12" cy="12" r="11" />
+            </svg>
             HabitPledge
           </h2>
           <div className="space-y-1">

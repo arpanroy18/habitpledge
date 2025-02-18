@@ -63,7 +63,6 @@ export default function NewHabitPage() {
           frequency: formData.frequency,
           target_days: parseInt(formData.target_days),
           pledge_amount: parseFloat(formData.pledge_amount),
-          status: 'active',
         },
       ]);
 

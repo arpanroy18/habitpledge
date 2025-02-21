@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Plus, Target, TrendingUp, Calendar, Award, AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/lib/database.types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 type Habit = Database['public']['Tables']['habits']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -129,13 +129,13 @@ export default function DashboardPage() {
   }
 
   const mockChartData = [
-    { name: 'Mon', completed: 4 },
-    { name: 'Tue', completed: 3 },
-    { name: 'Wed', completed: 5 },
-    { name: 'Thu', completed: 2 },
-    { name: 'Fri', completed: 4 },
-    { name: 'Sat', completed: 6 },
-    { name: 'Sun', completed: 4 },
+    { name: 'Mon', completed: 3 },
+    { name: 'Tue', completed: 5 },
+    { name: 'Wed', completed: 7 },
+    { name: 'Thu', completed: 6 },
+    { name: 'Fri', completed: 8 },
+    { name: 'Sat', completed: 9 },
+    { name: 'Sun', completed: 7 },
   ];
 
   return (
@@ -217,13 +217,40 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" {...defaultXAxisProps} />
-                <YAxis {...defaultYAxisProps} />
-                <Tooltip />
-                <Bar dataKey="completed" fill="hsl(var(--primary))" />
-              </BarChart>
+              <AreaChart data={mockChartData}>
+                <defs>
+                  <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary, 222.2 47.4% 11.2%))" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary, 222.2 47.4% 11.2%))" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                <XAxis 
+                  dataKey="name" 
+                  {...defaultXAxisProps}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <YAxis 
+                  {...defaultYAxisProps}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="completed"
+                  stroke="hsl(var(--primary, 222.2 47.4% 11.2%))"
+                  fill="url(#colorCompleted)"
+                  fillOpacity={1}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
